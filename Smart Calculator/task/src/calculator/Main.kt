@@ -7,17 +7,20 @@ fun main() {
         if (input == "/exit") {
             break
         }
+        if (input == "/help") {
+            println("The program calculates the sum of numbers")
+            continue
+        }
         if (input.isEmpty()) {
             continue
         }
         val values = input.split(" ")
         System.err.println("'$values'")
-        val a = values[0].toIntOrNull() ?: 0
-        var b = 0
-        if (values.size > 1) {
-            b = values[1].toIntOrNull() ?: 0
+        var sum = 0
+        for (value in values) {
+            sum += value.toIntOrNull() ?: 0
         }
-        println(a + b)
+        println(sum)
     }
     println("Bye!")
 }
