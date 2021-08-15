@@ -1,9 +1,11 @@
 package calculator
 
 fun main() {
+    val variables = mutableMapOf<String, Double>()
+
     while (true) {
-        val input = readLine()!!
-        System.err.println("'$input'")
+        val input = readLine()!!.trim()
+        System.err.println("input: '$input'")
         if (input.isEmpty()) {
             continue
         }
@@ -18,16 +20,39 @@ fun main() {
             println("Unknown command")
             continue
         }
+        if ("\\s*\\S+\\s*=.*".toRegex().matches(input)) {
+            // assignment
+            val (identifier, value) = input.split("\\s*=\\s*".toRegex())
+            System.err.println("identifier = '$identifier', value = '$value'")
+            if (!"[A-Za-z]+".toRegex().matches(identifier)) {
+                println("Invalid identifier")
+                continue
+            }
+            val existantValue = variables[value]
+            System.err.println("variables[$value] = $existantValue")
+            if (existantValue != null) {
+                System.err.println("existantValue: $value = $existantValue")
+                variables[identifier] = existantValue.toDouble()
+            } else if (!"(\\d+(\\.\\d+)?)".toRegex().matches(value)) {
+                println("Invalid assignment")
+                continue
+            } else {
+                variables[identifier] = value.toDouble()
+                System.err.println("set variable '$identifier' = ${value.toDouble()}")
+            }
+            System.err.println("variables: $variables")
+            continue
+        }
         val values = input.split(" ")
-        System.err.println("'$values'")
-        var sum = 0
+        System.err.println("values: '$values'")
+        var sum = 0.0
         var isOp = false
         var op = Operation.PLUS
         for (value in values) {
             if (!isOp) {
-                val operand = value.toIntOrNull()
+                val operand = variables[value] ?: value.toDoubleOrNull()
                 if (operand == null) {
-                    println("Invalid expression")
+                    println("Unknown variable")
                     continue
                 }
                 when (op) {
@@ -52,7 +77,7 @@ fun main() {
             }
             isOp = !isOp
         }
-        println(sum)
+        println(sum.toInt())
     }
     println("Bye!")
 }
