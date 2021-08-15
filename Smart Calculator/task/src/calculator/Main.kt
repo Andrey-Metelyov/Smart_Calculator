@@ -17,10 +17,35 @@ fun main() {
         val values = input.split(" ")
         System.err.println("'$values'")
         var sum = 0
+        var isOp = false
+        var op = Operation.PLUS
         for (value in values) {
-            sum += value.toIntOrNull() ?: 0
+            if (!isOp) {
+                val operand = value.toIntOrNull() ?: 0
+                when (op) {
+                    Operation.PLUS -> sum += operand
+                    Operation.MINUS -> sum -= operand
+                }
+                System.err.println("sum = $sum")
+            } else {
+                op = Operation.PLUS
+                for (ch in value) {
+                    op = when (ch) {
+                        '+' -> op
+                        '-' -> if (op == Operation.PLUS) Operation.MINUS else Operation.PLUS
+                        else -> return
+                    }
+                }
+                System.err.println("op = $op")
+            }
+            isOp = !isOp
         }
         println(sum)
     }
     println("Bye!")
+}
+
+enum class Operation {
+    PLUS,
+    MINUS,
 }
