@@ -1,5 +1,6 @@
 package calculator
 
+import java.math.BigInteger
 import java.util.*
 import kotlin.math.pow
 
@@ -12,24 +13,25 @@ class Expression {
     private var postfix = mutableListOf<Token>()
 
     fun parse(string: String): Boolean {
-        val stack = Stack<Char>()
-        var literal = ""
-        var operator = ""
+        val stack = Stack<Token>()
         var state = State.READ_LITERAL
         val tokens = mutableListOf<Token>()
         var acc = ""
         for (ch in string.replace(" ", "")) {
-            System.err.println("process '$ch' $state ($string), $acc")
+//            System.err.println("process '$ch' $state ($string), $acc")
             when {
                 ch == '(' -> {
                     when (state) {
                         State.READ_LITERAL -> {
                             // error. a + b (
-                            throw IllegalArgumentException("Bracket ( after literal in '$string'")
+                            // but not error if a + b ((
+//                            throw IllegalArgumentException("Bracket ( after literal in '$string'")
                         }
                         State.READ_OPERATOR -> {
                             // ok. a + b + (
                             tokens.add(Token(acc, Token.Type.OPERATOR))
+                            acc = ""
+                            state = State.READ_LITERAL
                         }
                     }
                     tokens.add(Token(ch.toString(), Token.Type.BRACKET))
@@ -40,6 +42,7 @@ class Expression {
                             // ok. a + b)
                             tokens.add(Token(acc, Token.Type.LITERAL))
                             acc = ""
+                            state = State.READ_OPERATOR
                         }
                         State.READ_OPERATOR -> {
                             // error. a + b + )
@@ -77,67 +80,101 @@ class Expression {
                 }
             }
         }
+        if (state == State.READ_LITERAL && acc.isNotEmpty()) {
+            tokens.add(Token(acc, Token.Type.LITERAL))
+        }
         System.err.println("tokens: ${tokens.joinToString()}")
-//        return false
         for (token in tokens) {
-            System.err.println("process '$token' ($string)")
-                when (state) {
-                    State.READ_LITERAL -> {
-                        if (!ch.isLetterOrDigit()) {
-                            postfix.add(Token(literal, Token.Type.LITERAL))
-                            literal = ""
-                            if (ch == '(') {
-                                stack.push(ch)
-                            } else if (ch == ')') {
-                                while (!stack.isEmpty() && stack.peek() != '(') {
-                                    postfix.add(Token(stack.pop().toString(), Token.Type.OPERATOR))
-                                }
-                                stack.pop()
-                            } else {
-                                state = State.READ_OPERATOR
-                                operator += ch
+            if (token.type == Token.Type.LITERAL) {
+                postfix.add(token)
+            } else if (token.type == Token.Type.BRACKET && token.value == "(") {
+                stack.push(token)
+            } else if (token.type == Token.Type.BRACKET && token.value == ")") {
+                while (!stack.isEmpty() && stack.peek().value != "(") {
+                    postfix.add(stack.pop())
+                }
+                if (stack.isEmpty()) {
+//                    throw java.lang.IllegalArgumentException("No opening bracket in $string")
+                    System.err.println("No opening bracket in $string")
+                    return false
+                }
+                stack.pop()
+            } else {
+                while (!stack.isEmpty() && prec(token) <= prec(stack.peek())){
+                    postfix.add(stack.pop())
+                }
+                stack.push(token)
+            }
+        }
+        while (!stack.isEmpty()) {
+            if (stack.peek().value == "(") {
+                return false
+//                throw IllegalArgumentException("Invalid expression")
+            }
+            postfix.add(stack.pop())
+        }
+        System.err.println("$string -> ${postfix.joinToString()}")
+        return true
+/*        return false
+        for (ch in string.replace(" ", "")) {
+            System.err.println("process '$ch' ($string)")
+            when (state) {
+                State.READ_LITERAL -> {
+                    if (!ch.isLetterOrDigit()) {
+                        postfix.add(Token(literal, Token.Type.LITERAL))
+                        literal = ""
+                        if (ch == '(') {
+                            stack.push(ch)
+                        } else if (ch == ')') {
+                            while (!stack.isEmpty() && stack.peek() != '(') {
+                                postfix.add(Token(stack.pop().toString(), Token.Type.OPERATOR))
                             }
+                            stack.pop()
                         } else {
-                            literal += ch
-                        }
-                    }
-                    State.READ_OPERATOR -> {
-                        if (ch.isLetterOrDigit() || ch == '(' || ch == ')') {
-                            if (operator.length > 1) {
-                                if ("[+\\-]+".toRegex().matches(operator)) {
-                                    // just + and -
-                                    if (operator.count { it == '-' } % 2 == 0) {
-                                        operator = "+"
-                                    } else {
-                                        operator = "-"
-                                    }
-                                } else {
-//                                throw IllegalArgumentException("Invalid operator '$operator'")
-                                    return false
-                                }
-                            }
-                            if (ch == '(') {
-                                stack.push(ch)
-                                state = State.READ_LITERAL
-                            } else if (ch == ')') {
-                                while (!stack.isEmpty() && stack.peek() != '(') {
-                                    postfix.add(Token(stack.pop().toString(), Token.Type.OPERATOR))
-                                }
-                                stack.pop()
-                            } else {
-                                while (!stack.isEmpty() && prec(ch) <= prec(stack.peek())) {
-                                    postfix.add(Token(stack.pop().toString(), Token.Type.OPERATOR))
-                                }
-                                stack.push(operator.first())
-                                operator = ""
-                                state = State.READ_LITERAL
-                                literal += ch
-                            }
-                        } else {
+                            state = State.READ_OPERATOR
                             operator += ch
                         }
+                    } else {
+                        literal += ch
                     }
                 }
+                State.READ_OPERATOR -> {
+                    if (ch.isLetterOrDigit() || ch == '(' || ch == ')') {
+                        if (operator.length > 1) {
+                            if ("[+\\-]+".toRegex().matches(operator)) {
+                                // just + and -
+                                if (operator.count { it == '-' } % 2 == 0) {
+                                    operator = "+"
+                                } else {
+                                    operator = "-"
+                                }
+                            } else {
+//                                throw IllegalArgumentException("Invalid operator '$operator'")
+                                return false
+                            }
+                        }
+                        if (ch == '(') {
+                            stack.push(ch)
+                            state = State.READ_LITERAL
+                        } else if (ch == ')') {
+                            while (!stack.isEmpty() && stack.peek() != '(') {
+                                postfix.add(Token(stack.pop().toString(), Token.Type.OPERATOR))
+                            }
+                            stack.pop()
+                        } else {
+                            while (!stack.isEmpty() && prec(ch) <= prec(stack.peek())) {
+                                postfix.add(Token(stack.pop().toString(), Token.Type.OPERATOR))
+                            }
+                            stack.push(operator.first())
+                            operator = ""
+                            state = State.READ_LITERAL
+                            literal += ch
+                        }
+                    } else {
+                        operator += ch
+                    }
+                }
+            }
 
             System.err.println("literal: $literal")
             System.err.println("operator: $operator")
@@ -153,32 +190,25 @@ class Expression {
         if (literal.isNotEmpty()) {
             postfix.add(Token(literal, Token.Type.LITERAL))
         }
-        while (!stack.isEmpty()) {
-            if (stack.peek() == '(') {
-                return false
-//                throw IllegalArgumentException("Invalid expression")
-            }
-            postfix.add(Token(stack.pop().toString(), Token.Type.OPERATOR))
-        }
-        System.err.println("$string -> ${postfix.joinToString()}")
-        return true
+
+ */
     }
 
-    private fun prec(operation: Char) = when (operation) {
+    private fun prec(operation: Token) = when (operation.value.first()) {
         '+', '-' -> 1
         '*', '/' -> 2
         '^' -> 3
         else -> -1
     }
 
-    fun eval(variables: MutableMap<String, Double>): Double {
+    fun eval(variables: MutableMap<String, BigInteger>): BigInteger {
         System.err.println("'${this.postfix}'.eval($variables)")
-        val stack = Stack<Double>()
+        val stack = Stack<BigInteger>()
         for (token in postfix) {
             if (token.type != Token.Type.OPERATOR) {
                 stack.push(
-                    token.value.toDoubleOrNull() ?: variables[token.value]
-                    ?: throw IllegalArgumentException("Unknow token '${token.value}'")
+                    token.value.toBigIntegerOrNull() ?: variables[token.value]
+                    ?: throw IllegalArgumentException("Unknown token '${token.value}'")
                 )
             } else {
                 val a = stack.pop()
@@ -191,14 +221,25 @@ class Expression {
         return stack.peek()
     }
 
-    private fun operation(a: Double, b: Double, op: String): Double {
-        return when (op) {
+    private fun operation(a: BigInteger, b: BigInteger, op: String): BigInteger {
+        System.err.println("perform $a $op $b")
+        val operator = if ("[+\\-]+".toRegex().matches(op)) {
+            // just + and -
+            if (op.count { it == '-' } % 2 == 0) {
+                "+"
+            } else {
+                "-"
+            }
+        } else {
+            op
+        }
+        return when (operator) {
             "+" -> a + b
             "-" -> a - b
             "/" -> a / b
             "*" -> a * b
-            "^" -> a.pow(b)
-            else -> throw UnsupportedOperationException("Unknown operation '$op'")
+            "^" -> a.pow(b.toInt())
+            else -> throw UnsupportedOperationException("Invalid expression. Unknown operation '$op'")
         }
     }
 }

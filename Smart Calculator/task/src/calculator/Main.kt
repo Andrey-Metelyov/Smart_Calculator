@@ -1,9 +1,10 @@
 package calculator
 
-val variables = mutableMapOf<String, Double>()
+import java.math.BigInteger
+
+val variables = mutableMapOf<String, BigInteger>()
 
 fun main() {
-
     while (true) {
         repeat(80) { System.err.print('-') }
         System.err.println()
@@ -34,49 +35,18 @@ fun main() {
         val expression = Expression()
         if (expression.parse(input)) {
             try {
-                println(expression.eval(variables).toInt())
+                println(expression.eval(variables))
             } catch (e: Exception) {
-                println("Invalid expression")
+                println(e.message)
             }
+        } else {
+            println("Invalid expression")
         }
-//        var sum = 0.0
-//        var isOp = false
-//        var op = Operation.PLUS
-//        for (value in values) {
-//            if (!isOp) {
-//                val operand = variables[value] ?: value.toDoubleOrNull()
-//                if (operand == null) {
-//                    println("Unknown variable")
-//                    continue
-//                }
-//                when (op) {
-//                    Operation.PLUS -> sum += operand
-//                    Operation.MINUS -> sum -= operand
-//                }
-//                System.err.println("sum = $sum")
-//            } else {
-//                if (!"(\\+|\\-)+".toRegex().matches(value)) {
-//                    println("Invalid expression")
-//                    continue
-//                }
-//                op = Operation.PLUS
-//                for (ch in value) {
-//                    op = when (ch) {
-//                        '+' -> op
-//                        '-' -> if (op == Operation.PLUS) Operation.MINUS else Operation.PLUS
-//                        else -> return
-//                    }
-//                }
-//                System.err.println("op = $op")
-//            }
-//            isOp = !isOp
-//        }
-//        println(sum.toInt())
     }
     println("Bye!")
 }
 
-private fun handleAssignment(input: String, variables: MutableMap<String, Double>): Boolean {
+private fun handleAssignment(input: String, variables: MutableMap<String, BigInteger>): Boolean {
     // assignment
     val (identifier, value) = input.split("\\s*=\\s*".toRegex())
     System.err.println("identifier = '$identifier', value = '$value'")
@@ -88,12 +58,12 @@ private fun handleAssignment(input: String, variables: MutableMap<String, Double
     System.err.println("variables[$value] = $existantValue")
     if (existantValue != null) {
         System.err.println("existantValue: $value = $existantValue")
-        variables[identifier] = existantValue.toDouble()
+        variables[identifier] = existantValue
     } else if (!"(-?\\d+(\\.\\d+)?)".toRegex().matches(value)) {
         println("Invalid assignment")
         return false
     } else {
-        variables[identifier] = value.toDouble()
+        variables[identifier] = value.toBigInteger()
         System.err.println("set variable '$identifier' = ${value.toDouble()}")
     }
     System.err.println("variables: $variables")

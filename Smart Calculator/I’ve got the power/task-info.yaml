@@ -267,42 +267,8 @@ files:
   visible: true
   learner_created: true
 feedback_link: https://hyperskill.org/projects/88/stages/492/implement#comment
-status: Failed
+status: Solved
 feedback:
-  message: "Wrong answer in test #1\n\nThe program cannot process addition and subtraction\
-    \ operations correctly.\n\nPlease find below the output of your program during\
-    \ this failed test.\nNote that the &#39;&gt;&#39; character indicates the beginning\
-    \ of the input line.\n\n---\n\nstdout:\n&gt; /help\nThe program calculates the\
-    \ sum of numbers\n&gt; \n&gt; n = -32\n&gt; 33 + 20 + 11 + 49 - 32 - 9 + 1 - 80\
-    \ + 4\n\nstderr:\n--------------------------------------------------------------------------------\n\
-    input: &#39;/help&#39;\n--------------------------------------------------------------------------------\n\
-    input: &#39;&#39;\n--------------------------------------------------------------------------------\n\
-    input: &#39;n = -32&#39;\nidentifier = &#39;n&#39;, value = &#39;-32&#39;\nvariables[-32]\
-    \ = null\nset variable &#39;n&#39; = -32.0\nvariables: {n=-32.0}\n--------------------------------------------------------------------------------\n\
-    input: &#39;33 + 20 + 11 + 49 - 32 - 9 + 1 - 80 + 4&#39;\nprocess &#39;3&#39;\
-    \ READ_LITERAL (33 + 20 + 11 + 49 - 32 - 9 + 1 - 80 + 4), \nprocess &#39;3&#39;\
-    \ READ_LITERAL (33 + 20 + 11 + 49 - 32 - 9 + 1 - 80 + 4), 3\nprocess &#39;+&#39;\
-    \ READ_LITERAL (33 + 20 + 11 + 49 - 32 - 9 + 1 - 80 + 4), 33\nprocess &#39;2&#39;\
-    \ READ_OPERATOR (33 + 20 + 11 + 49 - 32 - 9 + 1 - 80 + 4), +\nprocess &#39;0&#39;\
-    \ READ_LITERAL (33 + 20 + 11 + 49 - 32 - 9 + 1 - 80 + 4), 2\nprocess &#39;+&#39;\
-    \ READ_LITERAL (33 + 20 + 11 + 49 - 32 - 9 + 1 - 80 + 4), 20\nprocess &#39;1&#39;\
-    \ READ_OPERATOR (33 + 20 + 11 + 49 - 32 - 9 + 1 - 80 + 4), +\nprocess &#39;1&#39;\
-    \ READ_LITERAL (33 + 20 + 11 + 49 - 32 - 9 + 1 - 80 + 4), 1\nprocess &#39;+&#39;\
-    \ READ_LITERAL (33 + 20 + 11 + 49 - 32 - 9 + 1 - 80 + 4), 11\nprocess &#39;4&#39;\
-    \ READ_OPERATOR (33 + 20 + 11 + 49 - 32 - 9 + 1 - 80 + 4), +\nprocess &#39;9&#39;\
-    \ READ_LITERAL (33 + 20 + 11 + 49 - 32 - 9 + 1 - 80 + 4), 4\nprocess &#39;-&#39;\
-    \ READ_LITERAL (33 + 20 + 11 + 49 - 32 - 9 + 1 - 80 + 4), 49\nprocess &#39;3&#39;\
-    \ READ_OPERATOR (33 + 20 + 11 + 49 - 32 - 9 + 1 - 80 + 4), -\nprocess &#39;2&#39;\
-    \ READ_LITERAL (33 + 20 + 11 + 49 - 32 - 9 + 1 - 80 + 4), 3\nprocess &#39;-&#39;\
-    \ READ_LITERAL (33 + 20 + 11 + 49 - 32 - 9 + 1 - 80 + 4), 32\nprocess &#39;9&#39;\
-    \ READ_OPERATOR (33 + 20 + 11 + 49 - 32 - 9 + 1 - 80 + 4), -\nprocess &#39;+&#39;\
-    \ READ_LITERAL (33 + 20 + 11 + 49 - 32 - 9 + 1 - 80 + 4), 9\nprocess &#39;1&#39;\
-    \ READ_OPERATOR (33 + 20 + 11 + 49 - 32 - 9 + 1 - 80 + 4), +\nprocess &#39;-&#39;\
-    \ READ_LITERAL (33 + 20 + 11 + 49 - 32 - 9 + 1 - 80 + 4), 1\nprocess &#39;8&#39;\
-    \ READ_OPERATOR (33 + 20 + 11 + 49 - 32 - 9 + 1 - 80 + 4), -\nprocess &#39;0&#39;\
-    \ READ_LITERAL (33 + 20 + 11 + 49 - 32 - 9 + 1 - 80 + 4), 8\nprocess &#39;+&#39;\
-    \ READ_LITERAL (33 + 20 + 11 + 49 - 32 - 9 + 1 - 80 + 4), 80\nprocess &#39;4&#39;\
-    \ READ_OPERATOR (33 + 20 + 11 + 49 - 32 - 9 + 1 - 80 + 4), +\ntokens: 33, +, 20,\
-    \ +, 11, +, 49, -, 32, -, 9, +, 1, -, 80, +\n--------------------------------------------------------------------------------"
-  time: Mon, 16 Aug 2021 08:22:27 UTC
-record: -1
+  message: Congratulations!
+  time: Mon, 16 Aug 2021 12:20:50 UTC
+record: 6
